@@ -12,6 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TranslateCheck">
         <activity
+            android:name=".SetupActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TranslateCheck" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

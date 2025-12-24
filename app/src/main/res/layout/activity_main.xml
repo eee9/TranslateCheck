@@ -44,7 +44,7 @@
             android:layout_margin="3dp"
             android:layout_height="50dp"
             android:padding="10dp"
-            android:text="Paste to 1"
+            android:text="Paste"
             android:textColor="#fafafa" />
         <Button
             android:id="@+id/buttonTranslate"
@@ -62,7 +62,7 @@
             android:layout_margin="3dp"
             android:layout_height="50dp"
             android:padding="10dp"
-            android:text="Copy of 2"
+            android:text="Copy"
             android:textColor="#fafafa" />
         <Button
             android:id="@+id/buttonSetup"

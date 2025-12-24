@@ -1,6 +1,7 @@
 package com.maix.translatecheck
 
 import android.annotation.SuppressLint
+import android.content.ClipData
 
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
 
 import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.nl.translate.TranslateLanguage
@@ -49,10 +52,16 @@ class MainActivity : AppCompatActivity() {
       }
   }
 
+  private fun copyTextToClipboard(context: Context, text: String) {
+    val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clipData = ClipData.newPlainText("label", text) // "label" is a user-defined description.
+    clipboardManager.setPrimaryClip(clipData)
+  }
+
   @SuppressLint("SetTextI18n")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    log("onCreate starts /PCO, run 06.")
+    log("onCreate starts /PCO, run 08.")
     enableEdgeToEdge()
     setContentView(R.layout.activity_main)
     ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -77,6 +86,12 @@ class MainActivity : AppCompatActivity() {
       log("Translate button pressed.")
       translateText(editText1, editText2)
     }
+    buttonTranslate.setOnLongClickListener { view ->
+      // Code to execute on long press
+      Toast.makeText(this, "Long press detected!", Toast.LENGTH_SHORT).show()
+      // Return true to indicate the event is consumed
+      true
+    }
     val buttonPaste = findViewById<Button>(R.id.buttonPaste)
     buttonPaste.setOnClickListener {
 //      log("Paste pressed.")
@@ -85,6 +100,20 @@ class MainActivity : AppCompatActivity() {
       log("Paste text: '$pasteText'")
       editText1.setText(pasteText)
       Toast.makeText(this, "Pasted", Toast.LENGTH_SHORT).show()
+    }
+    val buttonCopy = findViewById<Button>(R.id.buttonCopy)
+    buttonCopy.setOnClickListener {
+      val copyText: String = editText2.text.toString()
+      log("Copy text: '$copyText'")
+      copyTextToClipboard(this, copyText)
+      Toast.makeText(this, "Copied", Toast.LENGTH_SHORT).show()
+    }
+
+    val buttonSetup = findViewById<Button>(R.id.buttonSetup)
+    buttonSetup.setOnClickListener {
+      log("Setup pressed")
+      val intent = Intent(this, SetupActivity::class.java)
+      startActivity(intent)
     }
 
     editText2.setOnClickListener {
