@@ -133,6 +133,12 @@ class MainActivity : AppCompatActivity() {
       }
   }
 
+  override fun onDestroy() {
+    log("onDestroy()")
+    englishFrenchTranslator.close()
+    super.onDestroy()
+  }
+
   @SuppressLint("SetTextI18n")
   fun translateText(editText1: EditText, editText2: EditText) {
     log("Test begins...")

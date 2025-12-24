@@ -1,34 +1,34 @@
 package com.maix.translatecheck
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Button
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import com.maix.translatecheck.databinding.ActivitySetupBinding
 
 class SetupActivity : AppCompatActivity() {
 
-  private lateinit var appBarConfiguration: AppBarConfiguration
-  private lateinit var binding: ActivitySetupBinding
+  fun log(msg: String) {
+    Log.d("xMx Setup", msg)
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    log("onCreate Setup")
+    enableEdgeToEdge()
+    setContentView(R.layout.activity_setup)
 
-    binding = ActivitySetupBinding.inflate(layoutInflater)
-    setContentView(binding.root)
-
-
-    val navController = findNavController(R.id.nav_host_fragment_content_setup)
-    appBarConfiguration = AppBarConfiguration(navController.graph)
-    setupActionBarWithNavController(navController, appBarConfiguration)
+    // Buttons ...
+    val buttonCancel = findViewById<Button>(R.id.buttonCancel)
+    buttonCancel.setOnClickListener {
+      log("Setup exit.")
+      finish();
+    }
 
   }
 
-  override fun onSupportNavigateUp(): Boolean {
-    val navController = findNavController(R.id.nav_host_fragment_content_setup)
-    return navController.navigateUp(appBarConfiguration)
-        || super.onSupportNavigateUp()
+  override fun onDestroy() {
+    log("Setup onDestroy()")
+    super.onDestroy()
   }
 }
