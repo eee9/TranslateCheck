@@ -1,22 +1,58 @@
 package com.maix.translatecheck
 
 import android.annotation.SuppressLint
-import android.app.Activity
+
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import kotlin.system.exitProcess
+import android.content.ClipboardManager
+
+import com.google.mlkit.common.model.DownloadConditions
+import com.google.mlkit.nl.translate.TranslateLanguage
+import com.google.mlkit.nl.translate.Translation
+import com.google.mlkit.nl.translate.Translator
+import com.google.mlkit.nl.translate.TranslatorOptions
 
 class MainActivity : AppCompatActivity() {
+
+  fun log(msg: String) {
+    Log.d("xMx", msg)
+  }
+  fun Toast_makeText(msg: String) {
+    Toast.makeText(this, "Model ready", Toast.LENGTH_LONG).show()
+  }
+
+  private val options = TranslatorOptions.Builder()
+    .setSourceLanguage(TranslateLanguage.ENGLISH)
+    .setTargetLanguage(TranslateLanguage.FRENCH)
+    .build()
+  private val englishFrenchTranslator = Translation.getClient(options)
+
+  fun downloadModel(translator: Translator) {
+    val conditions = DownloadConditions.Builder().requireWifi().build()
+    translator.downloadModelIfNeeded(conditions)
+      .addOnSuccessListener {
+        // Model downloaded successfully. You can now start translating.
+        log("Model downloaded successfully")
+        Toast_makeText("Model ready")
+      }
+      .addOnFailureListener { exception ->
+        // Model couldn’t be downloaded or other internal error.
+        log("Model download failed: $exception")
+        Toast_makeText("Model download failed")
+      }
+  }
+
   @SuppressLint("SetTextI18n")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    log("onCreate starts /PCO, run 06.")
     enableEdgeToEdge()
     setContentView(R.layout.activity_main)
     ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -25,29 +61,77 @@ class MainActivity : AppCompatActivity() {
       insets
     }
 
-    // Buttons ...
-    val buttonExit = findViewById<Button>(R.id.buttonExit)
-    val buttonTranslate = findViewById<Button>(R.id.buttonTranslate)
-    buttonExit.setOnClickListener {
-      finishAffinity();
-    }
+    val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
     // Edit Texts ...
     val editText1 = findViewById<EditText>(R.id.editText1)
     val editText2 = findViewById<EditText>(R.id.editText2)
-    editText1.setText("New text 1\n".repeat(55))
-    editText2.setText("Some text 2 new\n".repeat(45))
-    editText1.setTextIsSelectable(true);
-    editText1.editableText
-    editText1.setText(editText1.getText(), TextView.BufferType.EDITABLE);
-    editText1.setOnClickListener {
-      Toast.makeText(this, "TextView 1 clicked!", Toast.LENGTH_SHORT).show()
+
+    // Buttons ...
+    val buttonExit = findViewById<Button>(R.id.buttonExit)
+    buttonExit.setOnClickListener {
+      log("TranslateCheck exit.")
+      finishAffinity();
     }
+    val buttonTranslate = findViewById<Button>(R.id.buttonTranslate)
+    buttonTranslate.setOnClickListener {
+      log("Translate button pressed.")
+      translateText(editText1, editText2)
+    }
+    val buttonPaste = findViewById<Button>(R.id.buttonPaste)
+    buttonPaste.setOnClickListener {
+//      log("Paste pressed.")
+      val item = clipboardManager.primaryClip?.getItemAt(0)
+      val pasteText: String = item?.text as String
+      log("Paste text: '$pasteText'")
+      editText1.setText(pasteText)
+      Toast.makeText(this, "Pasted", Toast.LENGTH_SHORT).show()
+    }
+
     editText2.setOnClickListener {
       Toast.makeText(this, "+++ TEXTVIEW 2 +++", Toast.LENGTH_SHORT).show()
     }
+
+    val text = "Only some part of fifty books"
+    log("EN  : '$text'")
+    downloadModel(englishFrenchTranslator)
+    englishFrenchTranslator.translate(text)
+      .addOnSuccessListener { translatedText ->
+        // Translation successful.
+        log("FR  : '$translatedText'")
+      }
+      .addOnFailureListener { exception ->
+        log("ERR : $exception")
+      }
   }
-  
-  fun translateText() {
-    finishAffinity();
+
+  @SuppressLint("SetTextI18n")
+  fun translateText(editText1: EditText, editText2: EditText) {
+    log("Test begins...")
+    val textExample = "Just some part of the three books."
+    val edit = editText1.text.toString()
+    val englishText = edit.ifEmpty { textExample }
+    log("EN  : '$englishText'")
+//    downloadTranslatorIfNeeded() {
+      log("download...")
+      englishFrenchTranslator.translate(englishText)
+        .addOnSuccessListener { translatedText ->
+          // Translation successful.
+          log("FR  : '$translatedText'")
+//          editText2.setText("Translate:\'$translatedText'")
+          editText2.setText(translatedText)
+        }
+        .addOnFailureListener { exception ->
+          log("ERR : $exception")
+          // Error.
+          // ...
+        }
+        .addOnCanceledListener {
+          log("addOnCanceledListener")
+        }
+        .addOnCompleteListener {
+          log("addOnCompleteListener")
+        }
+//    }
+    log("Test done.")
   }
 }
