@@ -31,11 +31,17 @@ class MainActivity : AppCompatActivity() {
     Toast.makeText(this, "Model ready", Toast.LENGTH_LONG).show()
   }
 
-  private val options = TranslatorOptions.Builder()
+  private val optionsEnFr = TranslatorOptions.Builder()
     .setSourceLanguage(TranslateLanguage.ENGLISH)
     .setTargetLanguage(TranslateLanguage.FRENCH)
     .build()
-  private val englishFrenchTranslator = Translation.getClient(options)
+
+  private val optionsEnUk = TranslatorOptions.Builder()
+    .setSourceLanguage(TranslateLanguage.ENGLISH)
+    .setTargetLanguage(TranslateLanguage.UKRAINIAN)
+    .build()
+  private val englishFrenchTranslator = Translation.getClient(optionsEnFr)
+  private val englishUkraineTranslator = Translation.getClient(optionsEnUk)
 
   fun downloadModel(translator: Translator) {
     val conditions = DownloadConditions.Builder().requireWifi().build()
@@ -122,11 +128,14 @@ class MainActivity : AppCompatActivity() {
 
     val text = "Only some part of fifty books"
     log("EN  : '$text'")
-    downloadModel(englishFrenchTranslator)
-    englishFrenchTranslator.translate(text)
+//    downloadModel(englishFrenchTranslator)
+    downloadModel(englishUkraineTranslator)
+//    englishFrenchTranslator.translate(text)
+    englishUkraineTranslator.translate(text)
       .addOnSuccessListener { translatedText ->
         // Translation successful.
-        log("FR  : '$translatedText'")
+//        log("FR  : '$translatedText'")
+        log("UK  : '$translatedText'")
       }
       .addOnFailureListener { exception ->
         log("ERR : $exception")
@@ -135,7 +144,8 @@ class MainActivity : AppCompatActivity() {
 
   override fun onDestroy() {
     log("onDestroy()")
-    englishFrenchTranslator.close()
+//    englishFrenchTranslator.close()
+    englishUkraineTranslator.close()
     super.onDestroy()
   }
 
@@ -148,10 +158,12 @@ class MainActivity : AppCompatActivity() {
     log("EN  : '$englishText'")
 //    downloadTranslatorIfNeeded() {
       log("download...")
-      englishFrenchTranslator.translate(englishText)
+//      englishFrenchTranslator.translate(englishText)
+      englishUkraineTranslator.translate(englishText)
         .addOnSuccessListener { translatedText ->
           // Translation successful.
-          log("FR  : '$translatedText'")
+//          log("FR  : '$translatedText'")
+          log("UK  : '$translatedText'")
 //          editText2.setText("Translate:\'$translatedText'")
           editText2.setText(translatedText)
         }
