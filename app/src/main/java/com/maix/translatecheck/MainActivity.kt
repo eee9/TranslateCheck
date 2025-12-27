@@ -29,6 +29,16 @@ class MainActivity : AppCompatActivity() {
     Toast.makeText(this, "Model ready", Toast.LENGTH_LONG).show()
   }
 
+  val LANGS = mapOf(
+    1 to "ENGLISH",
+    2 to "FRENCH",
+    3 to "UKRAINIAN",
+    4 to "RUSSIAN",
+    5 to "ITALIAN",
+    6 to "SPANISH",
+    7 to "GERMAN",
+  )
+
   private val _optionsEnFr = TranslatorOptions.Builder()
     .setSourceLanguage(TranslateLanguage.ENGLISH)
     .setTargetLanguage(TranslateLanguage.FRENCH)
@@ -41,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
   private var options = TranslatorOptions.Builder()
     .setSourceLanguage(TranslateLanguage.ENGLISH)
-    .setTargetLanguage(TranslateLanguage.FRENCH)
+    .setTargetLanguage(TranslateLanguage.UKRAINIAN)
     .build()
 
 //  private val _englishFrenchTranslator = Translation.getClient(optionsEnFr)
@@ -76,15 +86,17 @@ class MainActivity : AppCompatActivity() {
   @SuppressLint("SetTextI18n")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    log("onCreate starts /PCR, run 11.")
-
+    log("onCreate starts /PCR, run 12.")
+    enableEdgeToEdge()
     val extras = intent.extras
     if (extras != null) {
       val receivedData = extras.getInt("EXTRA_MESSAGE")
       // Display the data
       log("EXTRA_MESSAGE: [$receivedData]")
     }
-    enableEdgeToEdge()
+
+    val items2 = R.array.planets_array2
+    log("items2 -> " + items2.toString())
     setContentView(R.layout.activity_main)
     ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
       val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -140,16 +152,17 @@ class MainActivity : AppCompatActivity() {
     val buttonSetup = findViewById<Button>(R.id.buttonSetup)
     buttonSetup.setOnClickListener {
       log("Setup pressed")
-      buttonTranslate.isEnabled = false
-      commonTranslator.close()
-      options = TranslatorOptions.Builder()
-        .setSourceLanguage(TranslateLanguage.ENGLISH)
-        .setTargetLanguage(TranslateLanguage.ITALIAN)
-        .build()
-      commonTranslator = Translation.getClient(options)
-      setupTranslator(buttonTranslate)
-//      val intent = Intent(this, SetupActivity::class.java)
-//      startActivity(intent)
+//      buttonTranslate.isEnabled = false
+//      val langTo = TranslateLanguage.ITALIAN
+//      commonTranslator.close()
+//      options = TranslatorOptions.Builder()
+//        .setSourceLanguage(TranslateLanguage.ENGLISH)
+//        .setTargetLanguage(langTo)
+//        .build()
+//      commonTranslator = Translation.getClient(options)
+//      setupTranslator(buttonTranslate)
+      val intent = Intent(this, SetupActivity::class.java)
+      startActivity(intent)
     }
 
     editText2.setOnClickListener {

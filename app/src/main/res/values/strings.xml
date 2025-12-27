@@ -6,7 +6,7 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string-array name="spinner_items">
+    <string-array name="planets_array2">
         <item>Option 1</item>
         <item>Option 2</item>
         <item>Option 3</item>
