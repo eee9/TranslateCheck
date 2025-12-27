@@ -29,7 +29,8 @@ class CustomSpinner : AppCompatAutoCompleteTextView {
     // Set text size and handle clicks to show dropdown
     textSize = 14F
     setOnClickListener {
-      if (!isPopupShowing) showDropDown()
+//      if (!isPopupShowing)
+        showDropDown()
     }
 
     // Set up the clear button and its behavior
@@ -70,18 +71,18 @@ class CustomSpinner : AppCompatAutoCompleteTextView {
    * Updates the clear button icon based on whether text is present in the spinner.
    * Custom drawables for the dropdown and close icons should be used.
    */
-  private fun updateClearButton() {
-    // Determine the drawable icon based on whether text is present
-    val drawable = if (text.isNullOrEmpty()) {
-      // Use your custom drawable for the dropdown icon
-      R.drawable.ic_launcher_background
-    } else {
-      // Use your custom drawable for the close icon
-      R.drawable.ic_launcher_foreground
-    }
-    // Set the drawable icon to the right of the text
-    setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, drawable, 0)
-  }
+//  private fun updateClearButton() {
+//    // Determine the drawable icon based on whether text is present
+//    val drawable = if (text.isNullOrEmpty()) {
+//      // Use your custom drawable for the dropdown icon
+//      R.drawable.ic_launcher_background
+//    } else {
+//      // Use your custom drawable for the close icon
+//      R.drawable.ic_launcher_foreground
+//    }
+//    // Set the drawable icon to the right of the text
+//    setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, drawable, 0)
+//  }
 
   /**
    * Clears the selected text in the spinner.

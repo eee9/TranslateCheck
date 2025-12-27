@@ -95,8 +95,9 @@ class MainActivity : AppCompatActivity() {
       log("EXTRA_MESSAGE: [$receivedData]")
     }
 
-    val items2 = R.array.planets_array2
-    log("items2 -> " + items2.toString())
+//    val items2 = R.array.planets_array2
+//    log("items2 -> " + items2.toString())
+
     setContentView(R.layout.activity_main)
     ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
       val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -104,6 +105,12 @@ class MainActivity : AppCompatActivity() {
       insets
     }
 
+    val res = getResources()
+    val planets: Array<String?> = res.getStringArray(R.array.planets_array)
+    planets.forEach { item ->
+      log(" -> '$item'\n")
+    }
+    log("array: " + planets.toString())
     val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
     // Edit Texts ...
     val editText1 = findViewById<EditText>(R.id.editText1)
