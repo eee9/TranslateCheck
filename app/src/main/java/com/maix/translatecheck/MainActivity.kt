@@ -2,7 +2,9 @@ package com.maix.translatecheck
 
 import android.annotation.SuppressLint
 import android.content.ClipData
-
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -12,10 +14,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
-
 import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.nl.translate.TranslateLanguage
 import com.google.mlkit.nl.translate.Translation
@@ -67,7 +65,14 @@ class MainActivity : AppCompatActivity() {
   @SuppressLint("SetTextI18n")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    log("onCreate starts /PCR, run 09.")
+    log("onCreate starts /PCR, run 11.")
+
+    val extras = intent.extras
+    if (extras != null) {
+      val receivedData = extras.getInt("EXTRA_MESSAGE")
+      // Display the data
+      log("EXTRA_MESSAGE: [$receivedData]")
+    }
     enableEdgeToEdge()
     setContentView(R.layout.activity_main)
     ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -85,7 +90,8 @@ class MainActivity : AppCompatActivity() {
     val buttonExit = findViewById<Button>(R.id.buttonExit)
     buttonExit.setOnClickListener {
       log("TranslateCheck exit.")
-      finishAffinity();
+//      finishAffinity();
+      finish();
     }
     val buttonTranslate = findViewById<Button>(R.id.buttonTranslate)
     buttonTranslate.setOnClickListener {

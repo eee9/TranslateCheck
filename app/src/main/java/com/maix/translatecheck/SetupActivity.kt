@@ -1,5 +1,6 @@
 package com.maix.translatecheck
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -23,6 +24,8 @@ class SetupActivity : AppCompatActivity() {
     enableEdgeToEdge()
     setContentView(R.layout.activity_setup)
 
+    var OPTION: Int = 0
+
     // Buttons ...
     val buttonCancel = findViewById<Button>(R.id.buttonCancel)
     buttonCancel.setOnClickListener {
@@ -30,23 +33,33 @@ class SetupActivity : AppCompatActivity() {
       finish();
     }
 
+    val buttonOK = findViewById<Button>(R.id.buttonOK)
+    buttonOK.setOnClickListener {
+      log("OK pressed.")
+      val intent: Intent = Intent(this, MainActivity::class.java)
+      // Put the data as an extra in the Intent
+      intent.putExtra("EXTRA_MESSAGE", OPTION) // "EXTRA_MESSAGE" is a unique key
+
+      // Start Activity B
+      startActivity(intent)
+    }
+
     val spinnerTo: Spinner = findViewById(R.id.spinnerTo)
-    val items: Array<String> = arrayOf("UKRAINIAN", "ENGLISH", "FRENCH")
-    val adapter = ArrayAdapter<String?>(this, android.R.layout.simple_spinner_dropdown_item, items)
-    ArrayAdapter.createFromResource(
-      this,
-      R.array.planets_array,
+//    val items: Array<String> = arrayOf("UKRAINIAN", "ENGLISH", "FRENCH")
+//    val adapter = ArrayAdapter<String?>(this, android.R.layout.simple_spinner_dropdown_item, items)
+    ArrayAdapter.createFromResource(this, R.array.planets_array,
       android.R.layout.simple_spinner_item
     ).also { adapter ->
       // Specify the layout to use when the list of choices appears.
       adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
       // Apply the adapter to the spinner.
       spinnerTo.adapter = adapter
+      spinnerTo.setSelection(3)
       spinnerTo.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
           log("Spinner pos  : [$pos]")
+          OPTION = pos
         }
-
         override fun onNothingSelected(parent: AdapterView<*>?) {
           TODO("Not yet implemented")
         }
