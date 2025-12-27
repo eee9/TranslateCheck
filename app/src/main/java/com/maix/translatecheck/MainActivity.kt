@@ -29,33 +29,14 @@ class MainActivity : AppCompatActivity() {
     Toast.makeText(this, "Model ready", Toast.LENGTH_LONG).show()
   }
 
-  val LANGS = mapOf(
-    1 to "ENGLISH",
-    2 to "FRENCH",
-    3 to "UKRAINIAN",
-    4 to "RUSSIAN",
-    5 to "ITALIAN",
-    6 to "SPANISH",
-    7 to "GERMAN",
-  )
-
-  private val _optionsEnFr = TranslatorOptions.Builder()
-    .setSourceLanguage(TranslateLanguage.ENGLISH)
-    .setTargetLanguage(TranslateLanguage.FRENCH)
-    .build()
-
-  private val _optionsEnUk = TranslatorOptions.Builder()
-    .setSourceLanguage(TranslateLanguage.ENGLISH)
-    .setTargetLanguage(TranslateLanguage.UKRAINIAN)
-    .build()
+  var OPTIONPOS = 2
+  var OPTIONTEXT = ""
 
   private var options = TranslatorOptions.Builder()
     .setSourceLanguage(TranslateLanguage.ENGLISH)
     .setTargetLanguage(TranslateLanguage.UKRAINIAN)
     .build()
 
-//  private val _englishFrenchTranslator = Translation.getClient(optionsEnFr)
-//  private val _englishUkraineTranslator = Translation.getClient(optionsEnUk)
   private var commonTranslator = Translation.getClient(options)
 
 
@@ -90,13 +71,12 @@ class MainActivity : AppCompatActivity() {
     enableEdgeToEdge()
     val extras = intent.extras
     if (extras != null) {
-      val receivedData = extras.getInt("EXTRA_MESSAGE")
+      OPTIONTEXT = extras.getString("EXTRA_MESSAGE") ?: ""
+      OPTIONPOS = extras.getInt("EXTRA_POS")
       // Display the data
-      log("EXTRA_MESSAGE: [$receivedData]")
+      log("EXTRA_MESSAGE: '$OPTIONTEXT'")
+      log("EXTRA_POS: [$OPTIONPOS]")
     }
-
-//    val items2 = R.array.planets_array2
-//    log("items2 -> " + items2.toString())
 
     setContentView(R.layout.activity_main)
     ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -105,12 +85,6 @@ class MainActivity : AppCompatActivity() {
       insets
     }
 
-    val res = getResources()
-    val planets: Array<String?> = res.getStringArray(R.array.planets_array)
-    planets.forEach { item ->
-      log(" -> '$item'\n")
-    }
-    log("array: " + planets.toString())
     val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
     // Edit Texts ...
     val editText1 = findViewById<EditText>(R.id.editText1)
@@ -169,6 +143,7 @@ class MainActivity : AppCompatActivity() {
 //      commonTranslator = Translation.getClient(options)
 //      setupTranslator(buttonTranslate)
       val intent = Intent(this, SetupActivity::class.java)
+      intent.putExtra("EXTRA_POS", OPTIONPOS)
       startActivity(intent)
     }
 
@@ -176,22 +151,40 @@ class MainActivity : AppCompatActivity() {
       Toast.makeText(this, "+++ TEXTVIEW 2 +++", Toast.LENGTH_SHORT).show()
     }
 
-    setupTranslator(buttonTranslate)
+    setupTranslator(buttonTranslate, OPTIONTEXT)
   }
 
-  fun setupTranslator(button: Button) {
+  fun getLanguage(lang: String): String {
+    var res = ""
+    when (lang.uppercase()) {
+      "ENGLISH" -> res = TranslateLanguage.ENGLISH
+      "FRENCH" -> res = TranslateLanguage.FRENCH
+      "UKRAINIAN" -> res = TranslateLanguage.UKRAINIAN
+      "RUSSIAN" -> res = TranslateLanguage.RUSSIAN
+      "ITALIAN" -> res = TranslateLanguage.ITALIAN
+      "SPANISH" -> res = TranslateLanguage.SPANISH
+      "GERMAN" -> res = TranslateLanguage.GERMAN
+    }
+    return res
+  }
+
+  fun setupTranslator(button: Button, lang: String) {
+    button.isEnabled = false
+    commonTranslator.close()
+    val langTo: String = getLanguage(lang)
+    options = TranslatorOptions.Builder()
+      .setSourceLanguage(TranslateLanguage.ENGLISH)
+      .setTargetLanguage(langTo)
+      .build()
+    commonTranslator = Translation.getClient(options)
+
     val text = "Only some part of fifty books"
     log("EN  : '$text'")
-//    downloadModel(englishFrenchTranslator)
-//    downloadModel(englishUkraineTranslator, buttonTranslate)
     downloadModel(commonTranslator, button)
-//    englishFrenchTranslator.translate(text)
-//    englishUkraineTranslator.translate(text)
     commonTranslator.translate(text)
       .addOnSuccessListener { translatedText ->
         // Translation successful.
-//        log("FR  : '$translatedText'")
-        log("LANG1 : '$translatedText'")
+        log("LANG2 : '$translatedText'")
       }
       .addOnFailureListener { exception ->
         log("ERR : $exception")
@@ -213,20 +206,13 @@ class MainActivity : AppCompatActivity() {
     log("EN  : '$englishText'")
 //    downloadTranslatorIfNeeded() {
       log("download...")
-//      englishFrenchTranslator.translate(englishText)
-//      englishUkraineTranslator.translate(englishText)
       commonTranslator.translate(englishText)
         .addOnSuccessListener { translatedText ->
-          // Translation successful.
-//          log("FR  : '$translatedText'")
           log("LANG2 : '$translatedText'")
-//          editText2.setText("Translate:\'$translatedText'")
           editText2.setText(translatedText)
         }
         .addOnFailureListener { exception ->
           log("ERR : $exception")
-          // Error.
-          // ...
         }
         .addOnCanceledListener {
           log("addOnCanceledListener")
