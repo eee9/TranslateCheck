@@ -80,7 +80,7 @@
             android:layout_margin="3dp"
             android:layout_height="50dp"
             android:padding="10dp"
-            android:text="PCO Exit"
+            android:text="Exit"
             android:textColor="#fafafa" />
     </LinearLayout>
 

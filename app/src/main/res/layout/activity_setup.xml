@@ -23,8 +23,8 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/langForm"
-        android:layout_width="match_parent"
+        android:id="@+id/langFrom"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="1dp"
@@ -32,7 +32,7 @@
         android:autofillHints="input page number..."
         android:padding="8dp"
         android:text="From"
-        android:textSize="24sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,19 +40,33 @@
 
     <EditText
         android:id="@+id/langTo"
-        android:layout_width="match_parent"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="1dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
-        android:padding="8dp"
         android:autofillHints="input page number..."
+        android:padding="8dp"
+        android:layout_margin="8dp"
         android:text="To"
-        android:textSize="24sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/langForm" />
+        app:layout_constraintTop_toBottomOf="@+id/langFrom" />
+
+    <Spinner
+        android:id="@+id/spinnerTo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:padding="8dp"
+        android:textSize="16sp"
+        android:spinnerMode="dropdown"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/langTo"
+        app:layout_constraintStart_toEndOf="@+id/langTo"
+        app:layout_constraintTop_toBottomOf="@+id/langFrom" />
 
     <Button
         android:id="@+id/buttonGo"

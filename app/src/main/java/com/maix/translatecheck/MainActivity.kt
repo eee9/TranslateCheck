@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
   @SuppressLint("SetTextI18n")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    log("onCreate starts /PCO, run 08.")
+    log("onCreate starts /PCR, run 09.")
     enableEdgeToEdge()
     setContentView(R.layout.activity_main)
     ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -100,12 +100,16 @@ class MainActivity : AppCompatActivity() {
     }
     val buttonPaste = findViewById<Button>(R.id.buttonPaste)
     buttonPaste.setOnClickListener {
-//      log("Paste pressed.")
+      log("Paste pressed.")
       val item = clipboardManager.primaryClip?.getItemAt(0)
-      val pasteText: String = item?.text as String
-      log("Paste text: '$pasteText'")
-      editText1.setText(pasteText)
-      Toast.makeText(this, "Pasted", Toast.LENGTH_SHORT).show()
+      if (item != null) {
+        val pasteText = item.text
+        if (pasteText != null) {
+          log("Pasting text: '$pasteText'")
+          editText1.setText(pasteText)
+          Toast.makeText(this, "Pasted", Toast.LENGTH_SHORT).show()
+        }
+      }
     }
     val buttonCopy = findViewById<Button>(R.id.buttonCopy)
     buttonCopy.setOnClickListener {
