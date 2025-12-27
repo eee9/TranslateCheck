@@ -29,30 +29,41 @@ class MainActivity : AppCompatActivity() {
     Toast.makeText(this, "Model ready", Toast.LENGTH_LONG).show()
   }
 
-  private val optionsEnFr = TranslatorOptions.Builder()
+  private val _optionsEnFr = TranslatorOptions.Builder()
     .setSourceLanguage(TranslateLanguage.ENGLISH)
     .setTargetLanguage(TranslateLanguage.FRENCH)
     .build()
 
-  private val optionsEnUk = TranslatorOptions.Builder()
+  private val _optionsEnUk = TranslatorOptions.Builder()
     .setSourceLanguage(TranslateLanguage.ENGLISH)
     .setTargetLanguage(TranslateLanguage.UKRAINIAN)
     .build()
-  private val englishFrenchTranslator = Translation.getClient(optionsEnFr)
-  private val englishUkraineTranslator = Translation.getClient(optionsEnUk)
 
-  fun downloadModel(translator: Translator) {
+  private var options = TranslatorOptions.Builder()
+    .setSourceLanguage(TranslateLanguage.ENGLISH)
+    .setTargetLanguage(TranslateLanguage.FRENCH)
+    .build()
+
+//  private val _englishFrenchTranslator = Translation.getClient(optionsEnFr)
+//  private val _englishUkraineTranslator = Translation.getClient(optionsEnUk)
+  private var commonTranslator = Translation.getClient(options)
+
+
+  fun downloadModel(translator: Translator, button: Button) {
+//    englishUkraineTranslator
     val conditions = DownloadConditions.Builder().requireWifi().build()
     translator.downloadModelIfNeeded(conditions)
       .addOnSuccessListener {
         // Model downloaded successfully. You can now start translating.
         log("Model downloaded successfully")
         Toast_makeText("Model ready")
+        button.isEnabled = true
       }
       .addOnFailureListener { exception ->
         // Model couldn’t be downloaded or other internal error.
         log("Model download failed: $exception")
         Toast_makeText("Model download failed")
+        button.isEnabled = false
       }
   }
 
@@ -94,6 +105,7 @@ class MainActivity : AppCompatActivity() {
       finish();
     }
     val buttonTranslate = findViewById<Button>(R.id.buttonTranslate)
+    buttonTranslate.isEnabled = false
     buttonTranslate.setOnClickListener {
       log("Translate button pressed.")
       translateText(editText1, editText2)
@@ -128,24 +140,38 @@ class MainActivity : AppCompatActivity() {
     val buttonSetup = findViewById<Button>(R.id.buttonSetup)
     buttonSetup.setOnClickListener {
       log("Setup pressed")
-      val intent = Intent(this, SetupActivity::class.java)
-      startActivity(intent)
+      buttonTranslate.isEnabled = false
+      commonTranslator.close()
+      options = TranslatorOptions.Builder()
+        .setSourceLanguage(TranslateLanguage.ENGLISH)
+        .setTargetLanguage(TranslateLanguage.ITALIAN)
+        .build()
+      commonTranslator = Translation.getClient(options)
+      setupTranslator(buttonTranslate)
+//      val intent = Intent(this, SetupActivity::class.java)
+//      startActivity(intent)
     }
 
     editText2.setOnClickListener {
       Toast.makeText(this, "+++ TEXTVIEW 2 +++", Toast.LENGTH_SHORT).show()
     }
 
+    setupTranslator(buttonTranslate)
+  }
+
+  fun setupTranslator(button: Button) {
     val text = "Only some part of fifty books"
     log("EN  : '$text'")
 //    downloadModel(englishFrenchTranslator)
-    downloadModel(englishUkraineTranslator)
+//    downloadModel(englishUkraineTranslator, buttonTranslate)
+    downloadModel(commonTranslator, button)
 //    englishFrenchTranslator.translate(text)
-    englishUkraineTranslator.translate(text)
+//    englishUkraineTranslator.translate(text)
+    commonTranslator.translate(text)
       .addOnSuccessListener { translatedText ->
         // Translation successful.
 //        log("FR  : '$translatedText'")
-        log("UK  : '$translatedText'")
+        log("LANG1 : '$translatedText'")
       }
       .addOnFailureListener { exception ->
         log("ERR : $exception")
@@ -154,8 +180,7 @@ class MainActivity : AppCompatActivity() {
 
   override fun onDestroy() {
     log("onDestroy()")
-//    englishFrenchTranslator.close()
-    englishUkraineTranslator.close()
+    commonTranslator.close()
     super.onDestroy()
   }
 
@@ -169,11 +194,12 @@ class MainActivity : AppCompatActivity() {
 //    downloadTranslatorIfNeeded() {
       log("download...")
 //      englishFrenchTranslator.translate(englishText)
-      englishUkraineTranslator.translate(englishText)
+//      englishUkraineTranslator.translate(englishText)
+      commonTranslator.translate(englishText)
         .addOnSuccessListener { translatedText ->
           // Translation successful.
 //          log("FR  : '$translatedText'")
-          log("UK  : '$translatedText'")
+          log("LANG2 : '$translatedText'")
 //          editText2.setText("Translate:\'$translatedText'")
           editText2.setText(translatedText)
         }
