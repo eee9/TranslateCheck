@@ -25,12 +25,14 @@ class MainActivity : AppCompatActivity() {
   fun log(msg: String) {
     Log.d("xMx", msg)
   }
-  fun Toast_makeText(msg: String) {
-    Toast.makeText(this, "Model ready", Toast.LENGTH_LONG).show()
+  fun Toast(msg: String) {
+    Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
   }
 
-  var OPTIONPOS = 2
-  var OPTIONTEXT = ""
+  var LANG_FROM_POS = 0
+  var LANG_FROM_TEXT = "ENGLISH"
+  var LANG_TO_POS = 2
+  var LANG_TO_TEXT = "UKRAINIAN"
 
   private var options = TranslatorOptions.Builder()
     .setSourceLanguage(TranslateLanguage.ENGLISH)
@@ -47,13 +49,13 @@ class MainActivity : AppCompatActivity() {
       .addOnSuccessListener {
         // Model downloaded successfully. You can now start translating.
         log("Model downloaded successfully")
-        Toast_makeText("Model ready")
+        Toast("Model ready")
         button.isEnabled = true
       }
       .addOnFailureListener { exception ->
         // Model couldn’t be downloaded or other internal error.
         log("Model download failed: $exception")
-        Toast_makeText("Model download failed")
+        Toast("Model download failed")
         button.isEnabled = false
       }
   }
@@ -67,15 +69,18 @@ class MainActivity : AppCompatActivity() {
   @SuppressLint("SetTextI18n")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    log("onCreate starts /PCR, run 12.")
+    log("onCreate starts /PCS, v.0.1.21")
     enableEdgeToEdge()
     val extras = intent.extras
     if (extras != null) {
-      OPTIONTEXT = extras.getString("EXTRA_MESSAGE") ?: ""
-      OPTIONPOS = extras.getInt("EXTRA_POS")
-      // Display the data
-      log("EXTRA_MESSAGE: '$OPTIONTEXT'")
-      log("EXTRA_POS: [$OPTIONPOS]")
+      LANG_FROM_TEXT = extras.getString("SETUP_LANG_FROM_TEXT") ?: ""
+      LANG_FROM_POS = extras.getInt("SETUP_LANG_FROM_POS")
+      LANG_TO_TEXT = extras.getString("SETUP_LANG_TO_TEXT") ?: ""
+      LANG_TO_POS = extras.getInt("SETUP_LANG_TO_POS")
+      log("SETUP_LANG_FROM_TEXT: '$LANG_FROM_TEXT'")
+      log("SETUP_LANG_FROM_POS : [$LANG_FROM_POS]")
+      log("SETUP_LANG_TO_TEXT  : '$LANG_TO_TEXT'")
+      log("SETUP_LANG_TO_POS   : [$LANG_TO_POS]")
     }
 
     setContentView(R.layout.activity_main)
@@ -133,17 +138,9 @@ class MainActivity : AppCompatActivity() {
     val buttonSetup = findViewById<Button>(R.id.buttonSetup)
     buttonSetup.setOnClickListener {
       log("Setup pressed")
-//      buttonTranslate.isEnabled = false
-//      val langTo = TranslateLanguage.ITALIAN
-//      commonTranslator.close()
-//      options = TranslatorOptions.Builder()
-//        .setSourceLanguage(TranslateLanguage.ENGLISH)
-//        .setTargetLanguage(langTo)
-//        .build()
-//      commonTranslator = Translation.getClient(options)
-//      setupTranslator(buttonTranslate)
       val intent = Intent(this, SetupActivity::class.java)
-      intent.putExtra("EXTRA_POS", OPTIONPOS)
+      intent.putExtra("MAIN_LANG_FROM_POS", LANG_FROM_POS)
+      intent.putExtra("MAIN_LANG_TO_POS", LANG_TO_POS)
       startActivity(intent)
     }
 
@@ -151,7 +148,7 @@ class MainActivity : AppCompatActivity() {
       Toast.makeText(this, "+++ TEXTVIEW 2 +++", Toast.LENGTH_SHORT).show()
     }
 
-    setupTranslator(buttonTranslate, OPTIONTEXT)
+    setupTranslator(buttonTranslate, LANG_FROM_TEXT, LANG_TO_TEXT)
   }
 
   fun getLanguage(lang: String): String {
@@ -168,18 +165,21 @@ class MainActivity : AppCompatActivity() {
     return res
   }
 
-  fun setupTranslator(button: Button, lang: String) {
+  fun setupTranslator(button: Button, lang1: String, lang2: String) {
     button.isEnabled = false
     commonTranslator.close()
-    val langTo: String = getLanguage(lang)
+    val langFrom: String = getLanguage(lang1)
+    val langTo: String = getLanguage(lang2)
+    if (langTo.isEmpty() || langFrom.isEmpty()) return
+    log("Translate: '$lang1' => '$lang2'")
     options = TranslatorOptions.Builder()
-      .setSourceLanguage(TranslateLanguage.ENGLISH)
+      .setSourceLanguage(langFrom)
       .setTargetLanguage(langTo)
       .build()
     commonTranslator = Translation.getClient(options)
 
     val text = "Only some part of fifty books"
-    log("EN  : '$text'")
+    log("LANG1 : '$text'")
     downloadModel(commonTranslator, button)
     commonTranslator.translate(text)
       .addOnSuccessListener { translatedText ->

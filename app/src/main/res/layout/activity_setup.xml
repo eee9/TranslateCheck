@@ -16,7 +16,7 @@
         android:layout_marginTop="8dp"
         android:padding="8dp"
         android:text="Choose languages:"
-        android:textSize="30sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,6 +36,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewD" />
+
+    <Spinner
+        android:id="@+id/spinnerFrom"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:padding="8dp"
+        android:textSize="16sp"
+        android:spinnerMode="dropdown"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/langFrom"
+        app:layout_constraintStart_toEndOf="@+id/langFrom"
         app:layout_constraintTop_toBottomOf="@+id/textViewD" />
 
     <EditText
@@ -60,9 +73,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:layout_marginTop="80dp"
         android:padding="8dp"
-        android:textSize="16sp"
         android:spinnerMode="dropdown"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/langTo"
         app:layout_constraintStart_toEndOf="@+id/langTo"

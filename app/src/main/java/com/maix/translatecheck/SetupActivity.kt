@@ -17,21 +17,23 @@ class SetupActivity : AppCompatActivity() {
     Log.d("xMx Setup", msg)
   }
 
-//  data class Item(val iconResId: Int, val itemName: String)
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     log("onCreate Setup")
     enableEdgeToEdge()
     setContentView(R.layout.activity_setup)
 
-    var OPTIONPOS = 0
-    var OPTIONTEXT = ""
+    var LANG_FROM_POS = 0
+    var LANG_FROM_TEXT = "ENGLISH"
+    var LANG_TO_POS = 2
+    var LANG_TO_TEXT = "UKRAINIAN"
 
     val extras = intent.extras
     if (extras != null) {
-      OPTIONPOS = extras.getInt("EXTRA_POS")
-      log("EXTRA_POS: [$OPTIONPOS]")
+      LANG_FROM_POS = extras.getInt("MAIN_LANG_FROM_POS")
+      LANG_TO_POS = extras.getInt("MAIN_LANG_TO_POS")
+      log("MAIN_LANG_FROM_POS: [$LANG_FROM_POS]")
+      log("MAIN_LANG_TO_POS  : [$LANG_TO_POS]")
     }
 
     // Buttons ...
@@ -46,39 +48,55 @@ class SetupActivity : AppCompatActivity() {
       log("OK pressed.")
       val intent = Intent(this, MainActivity::class.java)
       // Put the data as an extra in the Intent
-      intent.putExtra("EXTRA_MESSAGE", OPTIONTEXT)
-      intent.putExtra("EXTRA_POS", OPTIONPOS)
+      intent.putExtra("SETUP_LANG_FROM_TEXT", LANG_FROM_TEXT)
+      intent.putExtra("SETUP_LANG_FROM_POS", LANG_FROM_POS)
+      intent.putExtra("SETUP_LANG_TO_TEXT", LANG_TO_TEXT)
+      intent.putExtra("SETUP_LANG_TO_POS", LANG_TO_POS)
       startActivity(intent)
       finish()
     }
 
+    val spinnerFrom: Spinner = findViewById(R.id.spinnerFrom)
+    adapter(spinnerFrom, LANG_FROM_POS)
+    spinnerFrom.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+      override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+        log("SpinnerFrom pos  : [$pos]")
+        LANG_FROM_TEXT = spinnerFrom.getSelectedItem().toString()
+        log("SpinnerFrom text : '$LANG_FROM_TEXT'")
+        LANG_FROM_POS = pos
+      }
+      override fun onNothingSelected(parent: AdapterView<*>?) { TODO("Not yet implemented") }
+    }
     val spinnerTo: Spinner = findViewById(R.id.spinnerTo)
+    adapter(spinnerTo, LANG_TO_POS)
+    spinnerTo.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+      override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+        log("SpinnerTo pos  : [$pos]")
+        LANG_TO_TEXT = spinnerTo.getSelectedItem().toString()
+        log("SpinnerTo text : '$LANG_TO_TEXT'")
+        LANG_TO_POS = pos
+      }
+      override fun onNothingSelected(parent: AdapterView<*>?) { TODO("Not yet implemented") }
+    }
+
+  }
+
+  override fun onDestroy() {
+    log("Setup onDestroy()")
+    super.onDestroy()
+  }
+
+  fun adapter(spinner: Spinner, pos: Int) {
     ArrayAdapter.createFromResource(this, R.array.languages,
       android.R.layout.simple_spinner_item
     ).also { adapter ->
       // Specify the layout to use when the list of choices appears.
       adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
       // Apply the adapter to the spinner.
-      spinnerTo.adapter = adapter
-      spinnerTo.setSelection(OPTIONPOS)
-      spinnerTo.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-          log("Spinner pos  : [$pos]")
-          OPTIONTEXT = spinnerTo.getSelectedItem().toString()
-          log("Spinner text : '$OPTIONTEXT'")
-          OPTIONPOS = pos
-        }
+      spinner.adapter = adapter
+      spinner.setSelection(pos)
 
-        override fun onNothingSelected(parent: AdapterView<*>?) {
-          TODO("Not yet implemented")
-        }
-      }
     }
-  }
-
-  override fun onDestroy() {
-    log("Setup onDestroy()")
-    super.onDestroy()
   }
 
 }
