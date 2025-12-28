@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
   @SuppressLint("SetTextI18n")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    log("onCreate starts /PCS, v.0.1.21")
+    log("onCreate starts /PCS, v.0.1.22")
     enableEdgeToEdge()
     val extras = intent.extras
     if (extras != null) {
@@ -104,6 +104,7 @@ class MainActivity : AppCompatActivity() {
     }
     val buttonTranslate = findViewById<Button>(R.id.buttonTranslate)
     buttonTranslate.isEnabled = false
+    buttonTranslate.text = doButtonText(LANG_FROM_TEXT, LANG_TO_TEXT)
     buttonTranslate.setOnClickListener {
       log("Translate button pressed.")
       translateText(editText1, editText2)
@@ -151,6 +152,10 @@ class MainActivity : AppCompatActivity() {
     setupTranslator(buttonTranslate, LANG_FROM_TEXT, LANG_TO_TEXT)
   }
 
+  fun doButtonText(lang1: String, lang2: String): String {
+    return lang1.take(2).uppercase() + " => " + lang2.take(2).uppercase()
+  }
+
   fun getLanguage(lang: String): String {
     var res = ""
     when (lang.uppercase()) {
@@ -167,6 +172,7 @@ class MainActivity : AppCompatActivity() {
 
   fun setupTranslator(button: Button, lang1: String, lang2: String) {
     button.isEnabled = false
+    button.text = " MODEL Loading..."
     commonTranslator.close()
     val langFrom: String = getLanguage(lang1)
     val langTo: String = getLanguage(lang2)
@@ -181,6 +187,7 @@ class MainActivity : AppCompatActivity() {
     val text = "Only some part of fifty books"
     log("LANG1 : '$text'")
     downloadModel(commonTranslator, button)
+    button.text = doButtonText(lang1, lang2)
     commonTranslator.translate(text)
       .addOnSuccessListener { translatedText ->
         // Translation successful.

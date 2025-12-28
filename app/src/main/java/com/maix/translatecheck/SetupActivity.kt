@@ -52,6 +52,7 @@ class SetupActivity : AppCompatActivity() {
       intent.putExtra("SETUP_LANG_FROM_POS", LANG_FROM_POS)
       intent.putExtra("SETUP_LANG_TO_TEXT", LANG_TO_TEXT)
       intent.putExtra("SETUP_LANG_TO_POS", LANG_TO_POS)
+//      intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
       startActivity(intent)
       finish()
     }
